@@ -81,7 +81,7 @@ See [`.env.example`](./.env.example) for the full list with comments. Broadly: a
 
 The target application isn't public, selectors and URLs were replaced before publication, and there's no test account, Qase workspace, or mailbox behind this repo. Running `npx playwright test` here will fail at the first navigation. Use `npx playwright test --list` to see the test inventory without needing any of that.
 
-## 11. Security and sanitization note
+## 11. Security and publication note
 
 Selectors, endpoints, credentials, and business-specific text were replaced with neutral placeholders before this was published. `.env`, `variables/`, and `cache/` are gitignored and have never been tracked. No real secrets, tokens, credentials, or account data are present in the current published version of the repository.
 
