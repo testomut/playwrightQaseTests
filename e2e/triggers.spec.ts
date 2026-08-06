@@ -6,7 +6,7 @@ const oldAccountPhone = process.env[`OLD_ACCOUNT_PHONE_${env}`] as string;
 test.describe('Trigger', () => {
     test(
         qase(12, '@QATEST-12 Create and Send Custom Trigger'),
-        async ({ start, custom, tagForTest, customFieldForTest, userBalance, addFilesLiberty }) => {
+        async ({ start, custom, tagForTest, customFieldForTest, userBalance, addFilesLiberty: _addFilesLiberty }) => {
             const { userDetails, conversationsPage, triggersPage } = start;
             const { newTag } = tagForTest;
             const { newCustomFieldName, newCustomFieldValue } = customFieldForTest;

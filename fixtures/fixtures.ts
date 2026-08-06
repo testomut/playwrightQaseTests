@@ -180,7 +180,7 @@ export const test = baseTest.extend<TestFixtures>({
         });
         console.timeEnd('[Debug] openAuthPage');
     },
-    annuallyUpdateAccountSignIn: async ({ page, context }, use, testInfo) => {
+    annuallyUpdateAccountSignIn: async ({ page, context }, use) => {
         const conversationsPage = new ConversationsPage(page, context);
         const apiRequest = new ApiRequest(page);
         const settingsPage = new SettingsPage(page, context);
@@ -196,7 +196,7 @@ export const test = baseTest.extend<TestFixtures>({
         await use({ conversationsPage, userDetails, settingsPage, billingPage });
         console.timeEnd('[Debug] openAuthPage');
     },
-    newFreeAccountSignIn: async ({ page, context }, use, testInfo) => {
+    newFreeAccountSignIn: async ({ page, context }, use) => {
         const conversationsPage = new ConversationsPage(page, context);
         const apiRequest = new ApiRequest(page);
         const settingsPage = new SettingsPage(page, context);
@@ -248,7 +248,7 @@ export const test = baseTest.extend<TestFixtures>({
         await use(new CustomCommands(page, context));
     },
 
-    tagForTest: async ({ page, context }, use, testInfo) => {
+    tagForTest: async ({ page }, use, testInfo) => {
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             newTag: `tagTest`,
@@ -261,7 +261,7 @@ export const test = baseTest.extend<TestFixtures>({
         await use(testData);
         await apiRequest.deleteAllTags(token);
     },
-    customFieldForTest: async ({ page, context }, use, testInfo) => {
+    customFieldForTest: async ({ page }, use, testInfo) => {
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             newCustomFieldName: `QA Trig`,
@@ -285,7 +285,7 @@ export const test = baseTest.extend<TestFixtures>({
         await use(testData);
         await apiRequest.deleteAllCustomFields(token);
     },
-    userBalance: async ({ page, context }, use, testInfo) => {
+    userBalance: async ({ page }, use, testInfo) => {
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             balance: 123,

@@ -20,7 +20,7 @@ export default defineConfig({
                     api: {
                         token: process.env.QASE_TESTOPS_API_TOKEN,
                     },
-                    project: 'qa_test',
+                    project: process.env.QASE_PROJECT_CODE || 'DEMO',
                     uploadAttachments: true,
                     batch: {
                         size: 5,

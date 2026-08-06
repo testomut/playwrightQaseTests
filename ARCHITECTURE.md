@@ -38,7 +38,7 @@ Two paths, depending on what a test needs:
 
 ## Qase integration
 
-`playwright-qase-reporter` is registered in both configs. Each test is wrapped with `qase(id, '@QATEST-<id> Title')`, which attaches a Qase test-case ID and lets the tag double as a `--grep` filter. The reporter config sets a project code, run title, and `uploadAttachments: true`; `QASE_MODE` defaults to `off` in `.env.example`, so nothing is reported anywhere unless a real Qase TestOps token and project are configured — this repo doesn't include either. The project code and case IDs shown here are the pattern to copy, not a live workspace.
+`playwright-qase-reporter` is registered in both configs. Each test is wrapped with `qase(id, '@QATEST-<id> Title')`, which attaches a Qase test-case ID and lets the tag double as a `--grep` filter. The reporter config reads its project code from `QASE_PROJECT_CODE` (falling back to `DEMO`) and its run title from `QASE_TESTOPS_TITLE`, uploads attachments, and only actually reports when `QASE_MODE=testops` and a real `QASE_TESTOPS_API_TOKEN` are set - both default to off/empty in `.env.example`. The case IDs shown here are the pattern to copy, not a live workspace.
 
 ## Why services are separate from page objects
 

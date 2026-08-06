@@ -69,8 +69,6 @@ class AuthenticationPage extends BasePage {
     private getMessageFormAlertSelector: string = '.message-form-alert .message-body';
     private getMessageFormDangerSelector: string = '.has-text-danger';
     private getRegisterTrialMessageAlertSelector: string = '.registerTrial .message-body';
-    private notSupportedCountryModalCardBodySelector: string = '.registration-v2__countries-modal .modal-card-body';
-    private notSupportedCountryModalCardHeadSelector: string = '.registration-v2__countries-modal .modal-card-head';
 
     // Text fields
     private chooseCRMTitleTextField: string = 'Which CRM does your business use';
@@ -91,8 +89,6 @@ class AuthenticationPage extends BasePage {
     private declinedCardMessageFormAlertText: string = `We were unable to process your card payment. Please check your card details or try using a different card.`;
     private registerTrialMessageAlertText: string = `🎉Coupon applied! Enjoy 20% off  the first month.`;
     private businessEmailAddressMessageAlertText: string = `Please enter your business email address. This form does not accept addresses from gmail.com.`;
-    private notSupportedCountryModalCardHeadText: string = `Thank you for your interest in Qatest!`;
-    private notSupportedCountryModalCardBodyText: string = `Qatest is coming soon to @country. We'll notify once we that happens. In the mean time, you can get a US or Canada number for your business.`;
     // Endpoints
     private authLoginEndpoint: string = `${environmentUrl}/auth/login`;
     private usersMeEndpoint: string = `https://api.dev.qatest.com/${env}/int/v5/core/users/me`;
@@ -147,8 +143,6 @@ class AuthenticationPage extends BasePage {
         await this.customClick(this.signUpLinkSelector);
         await this.page.waitForSelector(this.emailSignupInputSelector, { state: 'visible', timeout: 60000 });
     }
-
-    async verifyNotSupportedCountryModal(country: string): Promise<void> {}
 
     async verifyErrorMessageInput(message: ErrorMessagesType): Promise<void> {
         const messageType = {

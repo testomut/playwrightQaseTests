@@ -68,9 +68,6 @@ class ConversationsPage extends BasePage {
     private searchSelector: string = `[aria-label="DropdownConversationHeaderSearch"] input`;
     private openSearchButtonSelector: string = `[aria-label="IconButtonConversationMenuSearch_Default"]`;
     private searchContactsSelector: string = `[aria-label="SearchContactsSelector"]`;
-    private searchTagsSelector: string = `[aria-label="SearchTagsSelector"]`;
-    private searchInboxesSelector: string = `[aria-label="SearchInboxesSelector"]`;
-    private searchAssigneesSelector: string = `[aria-label="searchAssigneesSelector"]`;
     private searchResultListSelector: string = `[aria-label="SearchContactItem"]`;
     private searchResultPhoneSelector: string = `[aria-label="TypographyPhoneInfo"]`;
     private searchResultNameSelector: string = `[aria-label="TypographyTitle"]`;
@@ -228,9 +225,6 @@ class ConversationsPage extends BasePage {
 
     async verifySearchResult(searchResult: GlobalSearchResult): Promise<void> {
         const contactsSection = this.page.locator(this.searchContactsSelector);
-        const tagsSection = this.page.locator(this.searchTagsSelector);
-        const inboxesSection = this.page.locator(this.searchInboxesSelector);
-        const assigneesSection = this.page.locator(this.searchAssigneesSelector);
 
         if (searchResult && searchResult.contacts) {
             const contactsAmount = await contactsSection.locator(this.searchResultListSelector).count();

@@ -1,4 +1,3 @@
-import type { FullConfig } from '@playwright/test';
 import { chromium } from '@playwright/test';
 import AuthenticationPage from '../pageObjects/AuthenticationPage';
 import * as fs from 'fs';
@@ -6,7 +5,7 @@ import * as path from 'path';
 import EmailService from '../services/EmailService';
 const userAccounts = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../variables/defaultUsers.json'), 'utf-8'));
 
-export default async function globalSetup(config: FullConfig) {
+export default async function globalSetup() {
     console.log('[CACHE WARMER] Warming up static files cache...');
     console.time('[CACHE WARMER] Done warming up static files cache.');
 

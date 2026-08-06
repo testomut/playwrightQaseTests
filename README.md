@@ -1,10 +1,12 @@
-# Playwright + Qase Test Framework
+# Sanitized Playwright Framework Architecture Sample
+
+Playwright, TypeScript, Qase TestOps, service layers, fixtures, parallel account provisioning, and external integration patterns.
 
 A sanitized architecture sample based on a Playwright framework I designed for a real product. Application-specific selectors, URLs, credentials, and business data were replaced before publication. The project demonstrates framework structure and integration patterns rather than providing a runnable test suite.
 
 ## 1. Project purpose
 
-This started as the automation framework for a SaaS product's UI and API regression suite (conversations, contacts, billing, broadcasts, triggers, members, analytics). It's published here to show how the framework itself is put together: page objects, a service layer, fixtures, parallel-safe test-account provisioning, and Qase TestOps reporting.
+This started as the automation framework for a SaaS product's UI and API regression suite spanning customer communication, account and user management, billing, workflow automation, and analytics. It's published here to show how the framework itself is put together: page objects, a service layer, fixtures, parallel-safe test-account provisioning, and Qase TestOps reporting.
 
 ## 2. What the project demonstrates
 
@@ -81,7 +83,7 @@ The target application isn't public, selectors and URLs were replaced before pub
 
 ## 11. Security and sanitization note
 
-Selectors, endpoints, credentials, and business-specific text were replaced with neutral placeholders before this was published. No real secrets, tokens, or account data are committed — `.env`, `variables/`, and `cache/` are gitignored and were never tracked in this repository's history.
+Selectors, endpoints, credentials, and business-specific text were replaced with neutral placeholders before this was published. `.env`, `variables/`, and `cache/` are gitignored and have never been tracked. No real secrets, tokens, credentials, or account data are present in the current published version of the repository.
 
 ## 12. Author
 
