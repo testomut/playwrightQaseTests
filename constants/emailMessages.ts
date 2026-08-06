@@ -1,5 +1,5 @@
 const SignUpEmail = () => ({
-    subject: `You're in Qa - Plus, a quick question...`, 
+    subject: `You're in Qa - Plus, a quick question...`,
     from: 'ceo@qatest.com',
     body: `
     Hi Qa,
@@ -21,7 +21,7 @@ const SignUpEmail = () => ({
 });
 
 const InviteMemberEmail = () => ({
-    subject: `@InviteMember invited you to @Organization on Qatest`, 
+    subject: `@InviteMember invited you to @Organization on Qatest`,
     from: 'noreply@qateest.com',
     body: `
     Hi,
@@ -35,18 +35,17 @@ If you don't want to accept the invitation please ignore this email. Your accoun
 });
 
 const ExportEmail = {
-    subject: `Your export has been delivered`, 
+    subject: `Your export has been delivered`,
     from: 'noreply@qatest.com',
     body: [
         'Hi , Your export has been delivered Download:',
-        `Cheers, Qatest If you're having trouble clicking the \"Download\" button, copy and paste the URL below into your web browser:`,
-        `2024 Qatest. All rights reserved.`
-    ]
-    ,
+        `Cheers, Qatest If you're having trouble clicking the "Download" button, copy and paste the URL below into your web browser:`,
+        `2024 Qatest. All rights reserved.`,
+    ],
 };
 
 module.exports = {
     SignUpEmail,
     InviteMemberEmail,
-    ExportEmail
+    ExportEmail,
 };

@@ -1,0 +1,7 @@
+node_modules/
+playwright-report/
+test-results/
+variables/
+cache/
+downloads/
+package-lock.json

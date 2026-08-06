@@ -28,7 +28,6 @@ const bigPath = path.resolve(__dirname, '../files/test_image_more_30.tif');
 dotenv.config();
 
 class BasePage extends CustomCommands {
-
     // Selectors
     public userIconSelector: string = '[aria-label="DropdownMainDropdown"] [aria-label="Avatar_Name"]';
     public userBalance: string = '[aria-label="TypographyFormattedAccountCredits"]';
@@ -49,14 +48,13 @@ class BasePage extends CustomCommands {
     private addedMediaFilesListSelector: string = '[aria-label="MessageField"] [aria-label="AttachmentCard"]';
     private openClientsPageSelector: string = '[href="/clients"]';
     private uploadAlertMessageSelector: string = '[aria-label="Alert_Desc"]';
-    
-    
+
     // Endpoints
     protected authEndpoint: string = `https://api.dev.qatest.com/${env}/int/v5/core/broadcasting/auth?connection=soketi`;
-    
+
     // Text fields
     private logOutButtonTextField: string = 'Log out';
-    private trySalesmsg2ButtonTextField: string = 'Try Qa test 2.0';
+    private tryNewVersionButtonTextField: string = 'Try Qa test 2.0';
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -96,35 +94,34 @@ class BasePage extends CustomCommands {
     }
 
     async verifyUserBalance(balance: number): Promise<void> {
-        const currentBalance = + ((await this.page.locator(this.userBalance).textContent())?.replace(',','') as string);
-        console.log(await this.page.locator(this.userBalance).textContent())
+        const currentBalance = +((await this.page.locator(this.userBalance).textContent())?.replace(',', '') as string);
+        console.log(await this.page.locator(this.userBalance).textContent());
         expect(currentBalance).toBe(balance);
     }
 
     async verifyEnoughBalanceForMessage(messagesEqual: number): Promise<void> {
-        const currentBalance = + ((await this.page.locator(this.userBalance).textContent())?.replace(',','') as string);
-        if(currentBalance- messagesEqual <= 0) {
-            throw new Error(`User can't send message. Current balance: ${currentBalance} credits but the user try to send ${messagesEqual} messages`);
+        const currentBalance = +((await this.page.locator(this.userBalance).textContent())?.replace(',', '') as string);
+        if (currentBalance - messagesEqual <= 0) {
+            throw new Error(
+                `User can't send message. Current balance: ${currentBalance} credits but the user try to send ${messagesEqual} messages`,
+            );
         }
     }
 
     async logOutUser(): Promise<void> {
-        await this.customClick(this.logOutButtonTextField, { selectorType: 'byText'});
+        await this.customClick(this.logOutButtonTextField, { selectorType: 'byText' });
     }
 
     async switchOnSecondVersion(): Promise<void> {
-        await this.customClick(this.trySalesmsg2ButtonTextField, { selectorType: 'byText'});
+        await this.customClick(this.tryNewVersionButtonTextField, { selectorType: 'byText' });
     }
 
     async waitOauthResponseLoad(): Promise<void> {
         await Promise.all([
-            this.page.waitForResponse(response => 
-                response.url().includes(this.authEndpoint) &&
-                response.status() === 200
+            this.page.waitForResponse(
+                (response) => response.url().includes(this.authEndpoint) && response.status() === 200,
             ),
-            this.page.waitForRequest(request => 
-                request.url().includes(this.authEndpoint)
-            )
+            this.page.waitForRequest((request) => request.url().includes(this.authEndpoint)),
         ]);
         await this.clickIfElementPresent(this.switchV2ButtonSelector);
     }
@@ -162,20 +159,22 @@ class BasePage extends CustomCommands {
     }
 
     async oauthWithToken(token: string) {
-        await this.context.addCookies([{
-            name: tokenENV,
-            value: token,
-            domain: '.api.dev.qatest.com',
-            path: `/${env}`,
-            httpOnly: true, 
-            secure: true,
-        }]);
-        
+        await this.context.addCookies([
+            {
+                name: tokenENV,
+                value: token,
+                domain: '.api.dev.qatest.com',
+                path: `/${env}`,
+                httpOnly: true,
+                secure: true,
+            },
+        ]);
+
         await this.page.goto(`${environmentUrl}/conversations`);
         await this.waitApplicationLoader();
         await this.waitSpinnerLoader();
-        
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
     }
 
     async upgradeNowModal() {
@@ -194,46 +193,46 @@ class BasePage extends CustomCommands {
     }
 
     async uploadAndVerifyFiles(files: MediaArray): Promise<void> {
-        for(let i=0; i<files.length; i++) {
+        for (let i = 0; i < files.length; i++) {
             let patch = imagePath;
             let file: 'audio' | 'img' | 'video' | 'doc' | 'error' = 'img';
-            if(files[i] === 'audio') {
+            if (files[i] === 'audio') {
                 patch = audioPath;
                 file = 'audio';
-            } else if(files[i] === 'video') {
+            } else if (files[i] === 'video') {
                 patch = videoPath;
                 file = 'video';
-            } else if(files[i] === 'mov') {
+            } else if (files[i] === 'mov') {
                 patch = movPath;
                 file = 'video';
-            } else if(files[i] === 'doc') {
+            } else if (files[i] === 'doc') {
                 patch = docPath;
                 file = 'doc';
-            } else if(files[i] === 'docx') {
+            } else if (files[i] === 'docx') {
                 patch = docxPath;
                 file = 'doc';
-            } else if(files[i] === 'xls') {
+            } else if (files[i] === 'xls') {
                 patch = xlsPath;
                 file = 'doc';
-            } else if(files[i] === 'xlsx') {
+            } else if (files[i] === 'xlsx') {
                 patch = xlsxPath;
                 file = 'doc';
-            } else if(files[i] === 'pdf') {
+            } else if (files[i] === 'pdf') {
                 patch = pdfPath;
                 file = 'doc';
-            } else if(files[i] === 'vcard') {
+            } else if (files[i] === 'vcard') {
                 patch = vcardPath;
                 file = 'doc';
-            } else if(files[i] === 'csv') {
+            } else if (files[i] === 'csv') {
                 patch = csvPath;
                 file = 'doc';
-            } else if(files[i] === 'png') {
+            } else if (files[i] === 'png') {
                 patch = imagePathPng;
                 file = 'img';
-            } else if(files[i] === 'gif') {
+            } else if (files[i] === 'gif') {
                 patch = gifPath;
                 file = 'img';
-            } else if(files[i] === 'big') {
+            } else if (files[i] === 'big') {
                 patch = bigPath;
                 file = 'error';
             }
@@ -245,19 +244,21 @@ class BasePage extends CustomCommands {
     async verifyMediaFileInput(file: 'audio' | 'img' | 'video' | 'doc' | 'error'): Promise<void> {
         console.log(file);
         const mediaFile = await this.page.locator(this.addedMediaFilesListSelector);
-        if(file !== 'doc') {
-            if(file !== 'error') {
-                const url = (await mediaFile.locator(file).getAttribute('src',{timeout:10000}) as string).split('blob:').find(str => str.includes("https")) as string;
+        if (file !== 'doc') {
+            if (file !== 'error') {
+                const url = ((await mediaFile.locator(file).getAttribute('src', { timeout: 10000 })) as string)
+                    .split('blob:')
+                    .find((str) => str.includes('https')) as string;
                 const response = await this.page.request.get(url);
                 const buffer = await response.body();
                 expect(buffer.byteLength).not.toBe(0);
             } else {
                 const message = await this.page.locator(this.uploadAlertMessageSelector).textContent();
-                expect(message?.trim()).toBe('The file is too large. It must not exceed 30 MB')
+                expect(message?.trim()).toBe('The file is too large. It must not exceed 30 MB');
             }
         } else {
             const fileSize = await mediaFile.locator(`[aria-label="TypographyInfo"]`).innerText();
-            expect(fileSize.replace(/KB/g, "")).not.toBe(0);
+            expect(fileSize.replace(/KB/g, '')).not.toBe(0);
         }
     }
 }

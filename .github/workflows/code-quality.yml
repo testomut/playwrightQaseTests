@@ -1,0 +1,39 @@
+name: Code Quality
+
+# Validates repo hygiene only - lint, formatting, and TypeScript
+# compilation. It does not run the Playwright/Qase suite: the target
+# application is sanitized and unavailable, so there's nothing for the
+# e2e tests to run against. See README.md and ARCHITECTURE.md.
+
+on:
+    push:
+        branches: ['**']
+    pull_request:
+
+jobs:
+    quality:
+        name: Lint, format check, and typecheck
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v7
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Lint
+              run: npm run lint
+
+            - name: Check formatting
+              run: npm run format:check
+
+            - name: Typecheck
+              run: npm run typecheck

@@ -1,5 +1,11 @@
 import { Page, expect, BrowserContext } from '@playwright/test';
-import { RegistrationData, LastRegistrationPageData, LastRegistrationClientsPageData, ErrorMessagesType, MessageFormAlertType } from '../types/Types';
+import {
+    RegistrationData,
+    LastRegistrationPageData,
+    LastRegistrationClientsPageData,
+    ErrorMessagesType,
+    MessageFormAlertType,
+} from '../types/Types';
 import * as fs from 'fs';
 import * as path from 'path';
 import BasePage from './BasePage';
@@ -46,7 +52,7 @@ class AuthenticationPage extends BasePage {
     private registerTrialNumbersNumbersListSelector: string = '[aria-label="InputRadiobox_Label"]';
     private dropdownListSelector: string = '[aria-label="DropdownList_Item"]';
     private areaUsCanadaListSelector: string = '[aria-label="MessagingRegionModalContent_Region"]';
-    private getNextButtonSelector: string ='[aria-label="ButtonNext"]'; 
+    private getNextButtonSelector: string = '[aria-label="ButtonNext"]';
     private getTrialNumberSelector: string = '[aria-label="GetStartedModalContent_Number"]';
     private getTryQatestFirstButtonSelector: string = '[aria-label="ButtonTryQatestFirst"]';
     private tryQatestFirstButtonSelector: string = '.button--action';
@@ -73,7 +79,7 @@ class AuthenticationPage extends BasePage {
     private completeRegistrationTitleTextField: string = 'Start Your 14-Day Trial';
     private getYourBusinessNumberTitleTextField: string = 'Get your business number';
     private yourTrialNumberTitleTextField: string = 'Say hello to your trial number!';
-    private emailErrorExistEmailText: string = 'This e-mail address has been taken. Please choose another one.'
+    private emailErrorExistEmailText: string = 'This e-mail address has been taken. Please choose another one.';
     private emailErrorInvalidEmailText: string = 'Invalid email';
     private organizationErrorEmptyInputText: string = 'The organization name must be a string.';
     private passwordErrorSmallLengthText: string = 'Password must be at least 7 characters.';
@@ -90,7 +96,7 @@ class AuthenticationPage extends BasePage {
     // Endpoints
     private authLoginEndpoint: string = `${environmentUrl}/auth/login`;
     private usersMeEndpoint: string = `https://api.dev.qatest.com/${env}/int/v5/core/users/me`;
-    
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -100,37 +106,40 @@ class AuthenticationPage extends BasePage {
 
     async visitLoginPage(): Promise<void> {
         await this.page.goto(`${environmentUrl}/auth/login`, { waitUntil: 'load', timeout: 200000 });
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
     }
 
     async visitSignUpAnyDomainPage(): Promise<void> {
         await this.page.goto(`${environmentUrl}/register?anydomain`, { waitUntil: 'load', timeout: 200000 });
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
     }
 
     async visitSignUpPage(coupon?: '20%'): Promise<void> {
-        if(coupon === '20%') {
-            await this.page.goto(`${environmentUrl}/register?authv2&redirect=%2Fconversations&c=FIRST20OFF`, { waitUntil: 'load', timeout: 200000 });
+        if (coupon === '20%') {
+            await this.page.goto(`${environmentUrl}/register?authv2&redirect=%2Fconversations&c=FIRST20OFF`, {
+                waitUntil: 'load',
+                timeout: 200000,
+            });
         } else {
             await this.page.goto(`${environmentUrl}/register?authv2`, { waitUntil: 'load', timeout: 200000 });
         }
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
     }
 
-    async loginUser(userDetails: { email: string, password: string }) {
+    async loginUser(userDetails: { email: string; password: string }) {
         await this.visitLoginPage();
-        await this.authenticateUser({ 
-            login: userDetails.email, 
-            password: userDetails.password 
+        await this.authenticateUser({
+            login: userDetails.email,
+            password: userDetails.password,
         });
         await this.waitOauthResponseLoad();
         const cookies = await this.page.context().cookies();
-        return cookies.find(cookie => cookie.name === tokenENV)?.value as string;
+        return cookies.find((cookie) => cookie.name === tokenENV)?.value as string;
     }
 
-    async authenticateUser(credentials: { login: string, password: string }): Promise<void> {
+    async authenticateUser(credentials: { login: string; password: string }): Promise<void> {
         await this.customFill(this.emailInputSelector, credentials.login);
-        await this.customFill(this.passwordInputSelector, credentials.password, {logs: false});
+        await this.customFill(this.passwordInputSelector, credentials.password, { logs: false });
         await this.customClick(this.signInButtonSelector);
     }
 
@@ -139,9 +148,7 @@ class AuthenticationPage extends BasePage {
         await this.page.waitForSelector(this.emailSignupInputSelector, { state: 'visible', timeout: 60000 });
     }
 
-    async verifyNotSupportedCountryModal(country: string): Promise<void> {
-        
-    }
+    async verifyNotSupportedCountryModal(country: string): Promise<void> {}
 
     async verifyErrorMessageInput(message: ErrorMessagesType): Promise<void> {
         const messageType = {
@@ -150,9 +157,8 @@ class AuthenticationPage extends BasePage {
             'small password': this.passwordErrorSmallLengthText,
             'wrong phone': this.phoneErrorSInvalidFormatText,
             'empty email': this.emailErrorInvalidEmailText,
-            'empty organization': this.organizationErrorEmptyInputText
-            
-        }
+            'empty organization': this.organizationErrorEmptyInputText,
+        };
         const errorMessage = await this.page.locator(this.inputErrorMessageTextSelector).textContent();
         expect(errorMessage?.trim()).toBe(messageType[message]);
     }
@@ -164,20 +170,23 @@ class AuthenticationPage extends BasePage {
             'declined card': this.declinedCardMessageFormAlertText,
             'business address': this.businessEmailAddressMessageAlertText,
             'incomplete card': this.incompleteCardMessageFormAlertText,
-            'incomplete date': this.incompleteDateMessageFormAlertText
-        }
-        const alertMessage = await this.page.locator(this.getMessageFormAlertSelector, {hasText:messageType[message]}).or(this.page.locator(this.getMessageFormDangerSelector, {hasText:messageType[message]})).textContent();
+            'incomplete date': this.incompleteDateMessageFormAlertText,
+        };
+        const alertMessage = await this.page
+            .locator(this.getMessageFormAlertSelector, { hasText: messageType[message] })
+            .or(this.page.locator(this.getMessageFormDangerSelector, { hasText: messageType[message] }))
+            .textContent();
         expect(alertMessage?.trim()).toBe(messageType[message]);
     }
 
     async enterEmailAndContinue(email?: string, verify = true): Promise<string> {
         let userEmail = emailGmail.replace('@', `${Date.now()}@`);
-        if(email !== undefined) {
+        if (email !== undefined) {
             userEmail = email;
         }
         await this.customFill(this.emailSignupInputSelector, userEmail);
         await this.customClick(this.continueButtonSelector);
-        if(verify) {
+        if (verify) {
             await this.page.waitForSelector(this.step2CrmSelector);
         }
         console.log(userEmail);
@@ -198,8 +207,10 @@ class AuthenticationPage extends BasePage {
 
     async verifyTitleCompleteRegistrationPage(coupon?: '20'): Promise<void> {
         await this.verifyTitle(this.completeRegistrationTitleTextField);
-        if(coupon === '20') {
-            const registerTrialMessage = await this.page.locator(this.getRegisterTrialMessageAlertSelector).textContent();
+        if (coupon === '20') {
+            const registerTrialMessage = await this.page
+                .locator(this.getRegisterTrialMessageAlertSelector)
+                .textContent();
             expect(registerTrialMessage?.trim()).toBe(this.registerTrialMessageAlertText);
         }
     }
@@ -222,14 +233,14 @@ class AuthenticationPage extends BasePage {
         const actualTitle = (await this.page.textContent(this.titleAlertSelector))?.trim();
         expect(actualTitle).toBe(expectedTitle);
     }
-    
+
     private async verifyGetStartedModalTitle(expectedTitle: string): Promise<void> {
         const actualTitle = (await this.page.textContent(this.titleGetStartedModalSelector))?.trim();
         expect(actualTitle).toBe(expectedTitle);
     }
 
     async selectCrmOptionAndContinue(crmOption: string): Promise<void> {
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
         await this.customClick(this.optionLabelSelector, { hasText: crmOption });
         await this.customClick(this.nextButtonSelector);
         await this.page.waitForSelector(this.step3SizeSelector);
@@ -289,7 +300,7 @@ class AuthenticationPage extends BasePage {
         const getTrialNumber = await this.page.locator(this.getTrialNumberSelector);
         const spinnerLoader = await getTrialNumber.locator(this.spinnerLoaderSelector).first();
         await spinnerLoader.waitFor({ state: 'detached' });
-        
+
         const phoneNumber = getTrialNumber.innerText();
         await this.customClick(this.getTryQatestFirstButtonSelector);
         return phoneNumber;
@@ -298,7 +309,7 @@ class AuthenticationPage extends BasePage {
     async completePersonalDetailsAndCreateAccount(details: RegistrationData): Promise<void> {
         await this.customFill(this.firstNameInputSelector, details.firstName);
         await this.customFill(this.lastNameInputSelector, details.lastName);
-        await this.customFill(this.accountNameInputSelector, details.account)
+        await this.customFill(this.accountNameInputSelector, details.account);
         await this.customFill(this.phoneNumberInputSelector, details.phone);
         await this.customFill(this.newPasswordInputSelector, details.password);
         await this.fillCardNumber(details.cardNumber, details.exp_date, details.cvc, details.zip);
@@ -309,19 +320,23 @@ class AuthenticationPage extends BasePage {
         await this.customClick(this.createAccountButtonSelector);
         await this.waitSpinnerLoader();
     }
-    
+
     async fillCardNumber(card: string, date: string, cvc: string, zip: string): Promise<void> {
-        const cardNumberInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.cardNumberInputSelector);
+        const cardNumberInputIframeSelector = this.page
+            .frameLocator(this.iframeSelector)
+            .locator(this.cardNumberInputSelector);
         await this.customFill(cardNumberInputIframeSelector, card);
-        if(zip !== '') {
+        if (zip !== '') {
             const zipInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.zipInputSelector);
             await this.customFill(zipInputIframeSelector, zip);
         }
-        if(date !== '') {
-            const expDateInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.expDateInputSelector);
+        if (date !== '') {
+            const expDateInputIframeSelector = this.page
+                .frameLocator(this.iframeSelector)
+                .locator(this.expDateInputSelector);
             await this.customFill(expDateInputIframeSelector, date);
         }
-        if(cvc !== '') {
+        if (cvc !== '') {
             const cvcInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.cvcInputSelector);
             await this.customFill(cvcInputIframeSelector, cvc);
         }
@@ -332,15 +347,14 @@ class AuthenticationPage extends BasePage {
         await this.page.waitForSelector(this.tryQatestFirstButtonSelector, { state: 'detached', timeout: 60000 });
     }
 
-    async createUser(userDetails?:RegistrationData, toolFree = false): Promise<RegistrationData> {
-        if(userDetails) {
+    async createUser(userDetails?: RegistrationData, toolFree = false): Promise<RegistrationData> {
+        if (userDetails) {
             newUser = userDetails;
         }
         let organizationId: any;
 
         const responseHandler = async (response) => {
             if (response.url().includes(this.usersMeEndpoint) && response.request().method() === 'GET') {
-                
                 if (response.ok()) {
                     const data = await response.json();
                     organizationId = data?.data?.organization?.id;
@@ -373,64 +387,66 @@ class AuthenticationPage extends BasePage {
         await this.verifyTitleCompleteRegistrationPage();
         await this.completePersonalDetailsAndCreateAccount(newUser);
         await this.verifyTitleGetYourBusinessNumberPage();
-        if(toolFree) {
+        if (toolFree) {
             newUser.businessNumber = await this.selectBusinessNumberToolFreeContinue();
         } else {
             newUser.businessNumber = await this.selectBusinessNumberWithLocalContinue();
-            
         }
         await this.verifyTitleYourTrialNumberPage();
         newUser.trialNumber = await this.copyTrialNumberAndContinue();
         this.page.off('response', responseHandler);
         const cookies = await this.page.context().cookies();
-        newUser.token = cookies.find(cookie => cookie.name === tokenENV)?.value as string;
+        newUser.token = cookies.find((cookie) => cookie.name === tokenENV)?.value as string;
         return newUser;
-    
     }
 
-    async acceptInviteNewMember(userDetails?:LastRegistrationPageData): Promise<void> {
+    async acceptInviteNewMember(userDetails?: LastRegistrationPageData): Promise<void> {
         let newMember = {
-            firstName: "Qa",
-            lastName: "test",
-            phone: "1112222345",
-            password: "123456789",
-        }
-        if(userDetails) {
+            firstName: 'Qa',
+            lastName: 'test',
+            phone: '1112222345',
+            password: '123456789',
+        };
+        if (userDetails) {
             newMember = userDetails;
         }
         await this.customFill(this.firstNameInputAcceptInvitationSelector, newMember.firstName);
         await this.customFill(this.lastNameInputAcceptInvitationSelector, newMember.lastName);
-        await this.customFill(this.phoneInputAcceptInvitationSelector, newMember.phone)
+        await this.customFill(this.phoneInputAcceptInvitationSelector, newMember.phone);
         await this.customFill(this.passwordInputAcceptInvitationSelector, newMember.password);
         await this.customFill(this.confirmPasswordInputAcceptInvitationSelector, newMember.password);
         await this.customClick(this.checkBoxAcceptInvitationSelector);
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
         await this.customClick(this.acceptInvitationButtonSelector);
         await this.waitApplicationLoader();
     }
 
-    async acceptInviteNewClient(email: string, userDetails?:LastRegistrationClientsPageData): Promise<void> {
+    async acceptInviteNewClient(email: string, userDetails?: LastRegistrationClientsPageData): Promise<void> {
         let newMember = {
-            firstName: "qwerty",
-            lastName: "qaqa",
-            phone: "2025552345",
+            firstName: 'qwerty',
+            lastName: 'qaqa',
+            phone: '2025552345',
             account: `AutomationClientOrg${Date.now()}`,
-            password: "123456789",
-            cardNumber: "4242424242424242",
-            exp_date: "0730",
-            cvc: "424",
-            zip: "42424",
-        }
-        if(userDetails) {
+            password: '123456789',
+            cardNumber: '4242424242424242',
+            exp_date: '0730',
+            cvc: '424',
+            zip: '42424',
+        };
+        if (userDetails) {
             newMember = userDetails;
         }
         await this.customFill(this.firstNameInputAcceptInvitationSelector, newMember.firstName);
         await this.customFill(this.lastNameInputAcceptInvitationSelector, newMember.lastName);
         await this.customFill(this.accountNameInputSelector, newMember.account);
-        await this.customFill(this.phoneInputAcceptInvitationClientsSelector, newMember.phone)
+        await this.customFill(this.phoneInputAcceptInvitationClientsSelector, newMember.phone);
         await this.customFill(this.passwordInputAcceptInvitationSelector, newMember.password);
-        const cardNumberInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.cardNumberInputSelector);
-        const expDateInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.expDateInputSelector);
+        const cardNumberInputIframeSelector = this.page
+            .frameLocator(this.iframeSelector)
+            .locator(this.cardNumberInputSelector);
+        const expDateInputIframeSelector = this.page
+            .frameLocator(this.iframeSelector)
+            .locator(this.expDateInputSelector);
         const cvcInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.cvcInputSelector);
         const zipInputIframeSelector = this.page.frameLocator(this.iframeSelector).locator(this.zipInputSelector);
         await this.customFill(cardNumberInputIframeSelector, newMember.cardNumber);
@@ -439,9 +455,9 @@ class AuthenticationPage extends BasePage {
         await this.customFill(zipInputIframeSelector, newMember.zip);
         await this.customClick(this.checkBoxAcceptInvitationSelector);
         const emailField = await this.page.locator(this.emailInputAcceptInvitationClientsSelector).inputValue();
-        await this.clickIfElementPresent(this.bannerAcceptSelector, {hidden: true});
-        await this.customClick(this.acceptInvitationButtonSelector, {nth: 0});
-        
+        await this.clickIfElementPresent(this.bannerAcceptSelector, { hidden: true });
+        await this.customClick(this.acceptInvitationButtonSelector, { nth: 0 });
+
         expect(emailField).toBe(email);
         await this.waitSpinnerLoader();
         await this.waitApplicationLoader();

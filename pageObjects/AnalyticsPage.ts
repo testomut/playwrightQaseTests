@@ -1,8 +1,6 @@
 import { Page, expect, BrowserContext } from '@playwright/test';
 import SettingsPage from './SettingsPage';
 import { ExportFileType, ExportFileData } from '../types/Types';
-const environmentUrl = process.env.ENVIRONMENT_URL as string;
-import * as path from 'path';
 import { promises as fs } from 'fs';
 
 class AnalyticsPage extends SettingsPage {
@@ -16,10 +14,10 @@ class AnalyticsPage extends SettingsPage {
     private selectFormatDropdownSelector: string = '.modal-card-body [type="select-one"]';
     private modalSuccessSelector: string = '.modal-alert-success';
     private downloadLinkSelector: string = '.modal-window-for-export-link';
-    
+
     //Text fields
     private newInboxTitleText: string = 'New Inbox';
-     
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -43,11 +41,11 @@ class AnalyticsPage extends SettingsPage {
     }
 
     async exportData(fileType: ExportFileType | undefined = undefined, submit = true): Promise<void> {
-        if(fileType) {
+        if (fileType) {
             await this.customClick(this.selectFormatDropdownSelector);
             await this.customClick(`[data-value="${fileType}"]`);
         }
-        if(submit) {
+        if (submit) {
             await this.customClick(this.exportButtonSelector);
         }
     }
@@ -59,11 +57,11 @@ class AnalyticsPage extends SettingsPage {
     async downloadExportFIle(): Promise<ExportFileData> {
         const [download] = await Promise.all([
             this.page.waitForEvent('download'),
-            this.customClick(this.downloadLinkSelector)
+            this.customClick(this.downloadLinkSelector),
         ]);
         const filePath = `./downloads/${download.suggestedFilename()}`;
         await download.saveAs(filePath);
-    
+
         let fileContent;
         if (await fs.stat(filePath)) {
             fileContent = await fs.readFile(filePath, 'utf8');
@@ -71,11 +69,11 @@ class AnalyticsPage extends SettingsPage {
         return {
             path: filePath,
             name: download.suggestedFilename(),
-            content: fileContent 
+            content: fileContent,
         };
     }
 
-    async verifyDownloadFile(fileInfo: ExportFileData, fileType:ExportFileType): Promise<void> {
+    async verifyDownloadFile(fileInfo: ExportFileData, fileType: ExportFileType): Promise<void> {
         const fileStat = await fs.stat(fileInfo.path);
         expect(fileStat.isFile()).toBe(true);
         expect(fileStat.size).toBeGreaterThan(0);
@@ -92,19 +90,19 @@ class AnalyticsPage extends SettingsPage {
             '"Outbound - Delivered"',
             '"Outbound - Undelivered"',
             '"Carrier Violations"',
-            'Opted-out'
+            'Opted-out',
         ];
         const actualHeaders = lines[0].split(',');
-    
+
         expect(actualHeaders).toEqual(expectedHeaders);
-    
+
         if (lines.length > 1) {
             const dataLine = lines[1].split(',');
             expect(dataLine.length).toBe(expectedHeaders.length);
-    
+
             const datePattern = /^\d{4}-\d{2}-\d{2}$/;
             expect(dataLine[0]).toMatch(datePattern);
-    
+
             for (let i = 1; i < dataLine.length; i++) {
                 expect(parseInt(dataLine[i], 10)).not.toBeNaN();
             }

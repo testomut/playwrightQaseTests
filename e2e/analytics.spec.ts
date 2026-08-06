@@ -1,12 +1,11 @@
 import { test } from '../fixtures/fixtures';
 import { qase } from 'playwright-qase-reporter';
-let { ExportEmail } = require('../constants/emailMessages');
-
+const { ExportEmail } = require('../constants/emailMessages');
 
 test.describe('Analytics', () => {
     test(qase(2038, '@QATEST-2038 Export Messages'), async ({ start, custom }) => {
         const { userDetails, analyticsPage, emailService } = start;
-        
+
         await custom.wrappedTestStep(`1. Click on Analytics icon on the side bar`, async () => {
             await analyticsPage.openAnalyticsPage();
         });
@@ -26,12 +25,12 @@ test.describe('Analytics', () => {
         await custom.wrappedTestStep(`5. Click the "Export" button`, async () => {
             await analyticsPage.exportData();
 
-            await analyticsPage.verifyExportFIle()
+            await analyticsPage.verifyExportFIle();
         });
 
         await custom.wrappedTestStep(`6. Click the link to download file`, async () => {
             const fileInfo = await analyticsPage.downloadExportFIle();
-            
+
             await analyticsPage.verifyDownloadFile(fileInfo, 'csv');
         });
 

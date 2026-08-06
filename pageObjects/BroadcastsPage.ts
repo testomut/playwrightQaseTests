@@ -1,19 +1,12 @@
 import { Page, expect, BrowserContext } from '@playwright/test';
 import SettingsPage from './SettingsPage';
 import { NewBroadcast, ConfirmSendBroadcast, BroadcastsTableList } from '../types/Types';
-const environmentUrl = process.env.ENVIRONMENT_URL as string;
-import * as path from 'path';
-const videoPath = path.resolve(__dirname, '../files/test_video.mp4');
-const audioPath = path.resolve(__dirname, '../files/test_audio.mp3');
-const docxPath = path.resolve(__dirname, '../files/test_docx_file.docx');
-const imagePath = path.resolve(__dirname, '../files/test_image.jpg');
-
 
 class BroadcastsPage extends SettingsPage {
     page: Page;
 
     // Selectors
-    
+
     private createBroadcastButtonSelector: string = '[aria-label="ButtonNewBroadcast"]';
     private sendBroadcastButtonSelector: string = '[aria-label="ButtonReviewSend_Text"]';
     private broadcastNameInputSelector: string = '[placeholder="Broadcast name"]';
@@ -46,7 +39,7 @@ class BroadcastsPage extends SettingsPage {
     private broadcastTableConversationsSelector: string = '.MuiTableCell-root';
     private broadcastTableStatusSelector: string = '.MuiTableCell-root';
     private broadcastsTableList: string = '.MuiTableBody-root';
-     
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -61,19 +54,21 @@ class BroadcastsPage extends SettingsPage {
 
     async fillNewTextBroadcast(broadcastData: NewBroadcast): Promise<void> {
         await this.customFill(this.broadcastNameInputSelector, broadcastData.name);
-        for(let i = 0; broadcastData.textMessage.length>i; i++) {
-            if(broadcastData.textMessage[i].emoji) {
+        for (let i = 0; broadcastData.textMessage.length > i; i++) {
+            if (broadcastData.textMessage[i].emoji) {
                 await this.customClick(this.openEmojiSelector);
                 await this.customClick(`[aria-label="${broadcastData.textMessage[i].emoji}"]`);
             }
-            if(broadcastData.textMessage[i].mergeField) {
+            if (broadcastData.textMessage[i].mergeField) {
                 await this.customClick(this.openMergeFieldsSelector);
-                const mergeField = await this.page.locator(this.mergeFieldsListSelector).getByText(broadcastData.textMessage[i].mergeField as string);
+                const mergeField = await this.page
+                    .locator(this.mergeFieldsListSelector)
+                    .getByText(broadcastData.textMessage[i].mergeField as string);
                 await this.customClick(mergeField);
             }
-            if(broadcastData.textMessage[i].message) {
+            if (broadcastData.textMessage[i].message) {
                 const message = broadcastData.textMessage[i].message as string;
-                await this.customFill(this.messageInputSelector, message, {clear: false});
+                await this.customFill(this.messageInputSelector, message, { clear: false });
             }
         }
 
@@ -81,7 +76,7 @@ class BroadcastsPage extends SettingsPage {
         const inbox = await this.page.locator(this.sendAsInboxListSelector).getByText(broadcastData.sendFrom);
         await this.customClick(inbox);
         await this.customClick(this.phoneInboxSelector);
-        for(let i = 0; broadcastData.contacts.length>i; i++) {
+        for (let i = 0; broadcastData.contacts.length > i; i++) {
             await this.customClick(this.contactsDropdownSelector);
             await this.customClick(this.searchContactsDropdownSelector);
             await this.customFill(this.searchContactsInputSelector, broadcastData.contacts[i]);
@@ -89,7 +84,6 @@ class BroadcastsPage extends SettingsPage {
             await this.customClick(this.successSearchResultListSelector);
             await this.customClick(this.selectContactButtonSelector);
         }
-        
     }
 
     async sendBroadcast(): Promise<void> {
@@ -114,24 +108,30 @@ class BroadcastsPage extends SettingsPage {
 
     async verifyBroadcastList(broadcastList: BroadcastsTableList): Promise<void> {
         const broadcasts = await this.page.locator(this.broadcastsTableList);
-        for(let i =0; broadcastList.length> i; i++) {
-            const broadcast = await broadcasts.filter({hasText: broadcastList[i].name});
-            console.log(await broadcast.textContent())
+        for (let i = 0; broadcastList.length > i; i++) {
+            const broadcast = await broadcasts.filter({ hasText: broadcastList[i].name });
+            console.log(await broadcast.textContent());
             const broadcastStatus = await broadcast.locator(this.broadcastTableStatusSelector).nth(3).textContent();
             const broadcastTotal = await broadcast.locator(this.broadcastTableTotalSelector).nth(5).textContent();
-            const broadcastDelivered = await broadcast.locator(this.broadcastTableDeliveredSelector).nth(6).textContent();
+            const broadcastDelivered = await broadcast
+                .locator(this.broadcastTableDeliveredSelector)
+                .nth(6)
+                .textContent();
             const broadcastReplies = await broadcast.locator(this.broadcastTableRepliesSelector).nth(7).textContent();
             const broadcastClicks = await broadcast.locator(this.broadcastTableClicksSelector).nth(8).textContent();
-            const broadcastConversions = await broadcast.locator(this.broadcastTableConversationsSelector).nth(9).textContent();
-            
+            const broadcastConversions = await broadcast
+                .locator(this.broadcastTableConversationsSelector)
+                .nth(9)
+                .textContent();
+
             expect(broadcastList[i].status).toBe(broadcastStatus?.trim());
             expect(broadcastList[i].total).toBe(broadcastTotal?.trim());
             expect(broadcastList[i].delivered).toBe(broadcastDelivered?.trim());
             expect(broadcastList[i].replies).toBe(broadcastReplies?.trim());
-            if(broadcastList[i].clicks) {
+            if (broadcastList[i].clicks) {
                 expect(broadcastList[i].clicks).toBe(broadcastClicks?.trim());
             }
-            if(broadcastList[i].conversions) {
+            if (broadcastList[i].conversions) {
                 expect(broadcastList[i].conversions).toBe(broadcastConversions?.trim());
             }
         }

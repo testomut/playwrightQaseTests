@@ -18,84 +18,82 @@ import SettingsPage from '../pageObjects/SettingsPage';
 import TriggersPage from '../pageObjects/TriggersPage';
 require('dotenv').config();
 
-
 const userAccounts = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../variables/defaultUsers.json'), 'utf-8'));
 const env = process.env.ENV;
 const oldAccountPhone = process.env[`OLD_ACCOUNT_PHONE_${env}`] as string;
-const environmentUrl = process.env.ENVIRONMENT_URL as string;
 const oldAccountEmail = process.env.OLD_ACCOUNT_EMAIL as string;
 const oldAccountPass = process.env.OLD_ACCOUNT_PASS as string;
 
 type TestFixtures = {
     openAuthPage: {
-        authPage: AuthenticationPage, 
-        conversationsPage: ConversationsPage, 
-        userDetails: RegistrationData,
-        settingsPage: SettingsPage,
-        billingPage: BillingPage
-    },
+        authPage: AuthenticationPage;
+        conversationsPage: ConversationsPage;
+        userDetails: RegistrationData;
+        settingsPage: SettingsPage;
+        billingPage: BillingPage;
+    };
     signUpWithCoupon: {
-        authPage: AuthenticationPage, 
-        conversationsPage: ConversationsPage, 
-        userDetails: RegistrationData,
-        settingsPage: SettingsPage,
-        billingPage: BillingPage
-    }
+        authPage: AuthenticationPage;
+        conversationsPage: ConversationsPage;
+        userDetails: RegistrationData;
+        settingsPage: SettingsPage;
+        billingPage: BillingPage;
+    };
     openAuthPageCoupon: {
-        authPage: AuthenticationPage, 
-        conversationsPage: ConversationsPage, 
-        userDetails: RegistrationData,
-        settingsPage: SettingsPage,
-        billingPage: BillingPage
-    },
+        authPage: AuthenticationPage;
+        conversationsPage: ConversationsPage;
+        userDetails: RegistrationData;
+        settingsPage: SettingsPage;
+        billingPage: BillingPage;
+    };
     start: {
-        conversationsPage: ConversationsPage, 
-        userDetails: RegistrationData,
-        authPage: AuthenticationPage,
-        emailService: EmailService,
-        apiRequest: ApiRequest,
-        contactsPage: ContactsPage,
-        membersPage: MembersPage,
-        settingsPage: SettingsPage,
-        inboxesPage: InboxesPage,
-        billingPage: BillingPage,
-        analyticsPage: AnalyticsPage,
-        clientsPage: ClientsPage,
-        triggersPage: TriggersPage,
-        broadcastsPage: BroadcastsPage,
-        amountMessages: number,
-    },
+        conversationsPage: ConversationsPage;
+        userDetails: RegistrationData;
+        authPage: AuthenticationPage;
+        emailService: EmailService;
+        apiRequest: ApiRequest;
+        contactsPage: ContactsPage;
+        membersPage: MembersPage;
+        settingsPage: SettingsPage;
+        inboxesPage: InboxesPage;
+        billingPage: BillingPage;
+        analyticsPage: AnalyticsPage;
+        clientsPage: ClientsPage;
+        triggersPage: TriggersPage;
+        broadcastsPage: BroadcastsPage;
+        amountMessages: number;
+    };
     annuallyUpdateAccountSignIn: {
-        conversationsPage: ConversationsPage, 
-        userDetails: RegistrationData,
-        settingsPage: SettingsPage,
-        billingPage: BillingPage
-    },
+        conversationsPage: ConversationsPage;
+        userDetails: RegistrationData;
+        settingsPage: SettingsPage;
+        billingPage: BillingPage;
+    };
     newFreeAccountSignIn: {
-        conversationsPage: ConversationsPage, 
-        newUser: RegistrationData,
-        settingsPage: SettingsPage,
-        billingPage: BillingPage
-    },
-    authPage: AuthenticationPage,
-    conversationsPage: ConversationsPage,
-    userDetails: RegistrationData,
-    emailService: EmailService,
-    apiRequest: ApiRequest,
-    custom: CustomCommands,
-    contactsPage: ContactsPage,
-    membersPage: MembersPage,
-    settingsPage: SettingsPage,
-    inboxesPage: InboxesPage,
-    billingPage: BillingPage,
-    analyticsPage: AnalyticsPage,
-    triggersPage: TriggersPage,
-    clientsPage: ClientsPage,
-    tagForTest: { newTag: string },
-    addFilesLiberty: void,
-    customFieldForTest: { newCustomFieldName: string, newCustomFieldValue: string },
-    userBalance: { balance: number },
-    oldAccountSignIn: { userDetails: RegistrationData, conversationsPage: ConversationsPage }
+        conversationsPage: ConversationsPage;
+        newUser: RegistrationData;
+        settingsPage: SettingsPage;
+        billingPage: BillingPage;
+    };
+    authPage: AuthenticationPage;
+    conversationsPage: ConversationsPage;
+    userDetails: RegistrationData;
+    emailService: EmailService;
+    apiRequest: ApiRequest;
+    custom: CustomCommands;
+    contactsPage: ContactsPage;
+    membersPage: MembersPage;
+    settingsPage: SettingsPage;
+    inboxesPage: InboxesPage;
+    billingPage: BillingPage;
+    analyticsPage: AnalyticsPage;
+    triggersPage: TriggersPage;
+    clientsPage: ClientsPage;
+    tagForTest: { newTag: string };
+    addFilesLiberty: void;
+    customFieldForTest: { newCustomFieldName: string; newCustomFieldValue: string };
+    userBalance: { balance: number };
+    oldAccountSignIn: { userDetails: RegistrationData; conversationsPage: ConversationsPage };
 };
 
 export const test = baseTest.extend<TestFixtures>({
@@ -108,7 +106,7 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
         await authPage.visitLoginPage();
         await use({ authPage, conversationsPage, userDetails, settingsPage, billingPage });
@@ -123,7 +121,7 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
         await authPage.visitSignUpPage('20%');
         await use({ authPage, conversationsPage, userDetails, settingsPage, billingPage });
@@ -133,7 +131,7 @@ export const test = baseTest.extend<TestFixtures>({
         const userDetails = userAccounts[testInfo.parallelIndex];
         const authPage = new AuthenticationPage(page, context);
         const conversationsPage = new ConversationsPage(page, context);
-        const apiRequest = new ApiRequest(page)
+        const apiRequest = new ApiRequest(page);
         const contactsPage = new ContactsPage(page, context);
         const emailService = new EmailService(page);
         const membersPage = new MembersPage(page, context);
@@ -147,30 +145,30 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
-        
+
         const token = await apiRequest.login(userDetails.email, userDetails.password);
         userDetails.token = token.token.access_token;
         await conversationsPage.oauthWithToken(userDetails.token);
         await conversationsPage.selectInbox(`${userDetails.firstName} ${userDetails.lastName}`);
         await conversationsPage.selectConversation(oldAccountPhone);
-        
+
         const isDisabled = await conversationsPage.isDisabledInput();
-        if(isDisabled) {
+        if (isDisabled) {
             const amountMessages = await conversationsPage.getMessagesAmount();
             await apiRequest.sendMessageRecipient(userDetails.businessNumber, 'START');
             await conversationsPage.waitNewMessage(amountMessages, 1);
         }
         const amountMessages = await conversationsPage.getMessagesAmount();
-        await use({ 
-            conversationsPage, 
-            authPage, 
-            contactsPage, 
-            emailService, 
-            apiRequest, 
-            membersPage, 
-            settingsPage, 
+        await use({
+            conversationsPage,
+            authPage,
+            contactsPage,
+            emailService,
+            apiRequest,
+            membersPage,
+            settingsPage,
             userDetails,
             inboxesPage,
             billingPage,
@@ -178,7 +176,7 @@ export const test = baseTest.extend<TestFixtures>({
             triggersPage,
             broadcastsPage,
             amountMessages,
-            clientsPage
+            clientsPage,
         });
         console.timeEnd('[Debug] openAuthPage');
     },
@@ -190,7 +188,7 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
         const userDetails = await apiRequest.createUserApi();
         await apiRequest.upgradePlan(userDetails.token, 'pro-yearly-90000');
@@ -206,7 +204,7 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
         const newUser = await apiRequest.createUserApi();
         await conversationsPage.oauthWithToken(newUser.token);
@@ -220,7 +218,7 @@ export const test = baseTest.extend<TestFixtures>({
         console.time('[Debug] openAuthPage');
         await page.routeFromHAR('cache/cache.har', {
             notFound: 'fallback',
-            update: false
+            update: false,
         });
         const token = await apiRequest.login(oldAccountEmail, oldAccountPass);
         await conversationsPage.oauthWithToken(token.token.access_token);
@@ -243,18 +241,18 @@ export const test = baseTest.extend<TestFixtures>({
     emailService: async ({ page }, use) => {
         await use(new EmailService(page));
     },
-    apiRequest: async ({page}, use) => {
+    apiRequest: async ({ page }, use) => {
         await use(new ApiRequest(page));
     },
-    custom: async ({ page, context}, use) => {
+    custom: async ({ page, context }, use) => {
         await use(new CustomCommands(page, context));
     },
-    
+
     tagForTest: async ({ page, context }, use, testInfo) => {
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             newTag: `tagTest`,
-        }
+        };
         const apiRequest = new ApiRequest(page);
         let token = await apiRequest.login(userDetails.email, userDetails.password);
         token = token.token.access_token;
@@ -267,8 +265,8 @@ export const test = baseTest.extend<TestFixtures>({
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             newCustomFieldName: `QA Trig`,
-            newCustomFieldValue: `qa tests`
-        }
+            newCustomFieldValue: `qa tests`,
+        };
         const apiRequest = new ApiRequest(page);
         let token = await apiRequest.login(userDetails.email, userDetails.password);
         token = token.token.access_token;
@@ -276,9 +274,14 @@ export const test = baseTest.extend<TestFixtures>({
         await apiRequest.addCustomField(token, {
             name: testData.newCustomFieldName,
             type: 'text',
-            visible: false
-        })
-        await apiRequest.updateContactCustomField(token, oldAccountPhone, testData.newCustomFieldName, testData.newCustomFieldValue);
+            visible: false,
+        });
+        await apiRequest.updateContactCustomField(
+            token,
+            oldAccountPhone,
+            testData.newCustomFieldName,
+            testData.newCustomFieldValue,
+        );
         await use(testData);
         await apiRequest.deleteAllCustomFields(token);
     },
@@ -286,7 +289,7 @@ export const test = baseTest.extend<TestFixtures>({
         const userDetails = userAccounts[testInfo.parallelIndex];
         const testData = {
             balance: 123,
-        }
+        };
         const apiRequest = new ApiRequest(page);
         let token = await apiRequest.login(userDetails.email, userDetails.password);
         token = token.token.access_token;
@@ -297,7 +300,7 @@ export const test = baseTest.extend<TestFixtures>({
     addFilesLiberty: async ({ page, context }, use, testInfo) => {
         const conversationsPage = new ConversationsPage(page, context);
         const userDetails = userAccounts[testInfo.parallelIndex];
-        await conversationsPage.selectConversation(`${userDetails.firstName} ${userDetails.lastName}`)
+        await conversationsPage.selectConversation(`${userDetails.firstName} ${userDetails.lastName}`);
         await conversationsPage.uploadAndVerifyFiles(['img', 'video']);
         await conversationsPage.selectConversation(oldAccountPhone);
         await use();

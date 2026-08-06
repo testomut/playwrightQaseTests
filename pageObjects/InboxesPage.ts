@@ -20,10 +20,10 @@ class InboxesPage extends SettingsPage {
     private chooseButtonsListSelector: string = '.toggleButtons__item';
     private phoneListSelector: string = '.radio-label';
     private createInboxButtonSelector: string = '.button--submit';
-    
+
     //Text fields
     private newInboxTitleText: string = 'New Inbox';
-     
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -34,7 +34,7 @@ class InboxesPage extends SettingsPage {
     async verifyAllInboxes(inboxes: InboxesList): Promise<void> {
         const curInboxesCount = await this.page.locator(this.allInboxesListSelector).count();
         expect(curInboxesCount).toBe(inboxes.length);
-        for(let i=0; i<curInboxesCount; i++) {
+        for (let i = 0; i < curInboxesCount; i++) {
             const inboxItem = await this.page.locator(this.allInboxesListSelector).nth(i);
             const inboxName = await inboxItem.locator(this.allInboxesNameSelector).textContent();
             const inboxOwner = await inboxItem.locator(this.allInboxesOwnerSelector).textContent();
@@ -42,11 +42,10 @@ class InboxesPage extends SettingsPage {
             expect(inboxName?.trim()).toBe(inboxes[i].name);
             expect(inboxOwner?.trim()).toBe(inboxes[i].owner);
             expect(inboxNumber?.trim()).toBe(inboxes[i].phone?.trim());
-            if(inboxes[i].members) {
+            if (inboxes[i].members) {
                 const inboxMember = await inboxItem.locator(this.allInboxesMembersSelector).textContent();
                 expect(inboxMember).toBe(inboxes[i].members);
             }
-            
         }
     }
 
@@ -72,10 +71,10 @@ class InboxesPage extends SettingsPage {
         await this.customFill(this.newInboxNameInputSelector, inboxData.name);
         const numberTypeButton = await this.page.locator(this.chooseButtonsListSelector).getByText(inboxData.type);
         await this.customClick(numberTypeButton);
-        if(inboxData.type === 'Toll-Free Number') {
-            await this.customClick(this.phoneListSelector, {nth:0});
-            return await this.page.locator(this.phoneListSelector).nth(0).textContent() as string;
-        } 
+        if (inboxData.type === 'Toll-Free Number') {
+            await this.customClick(this.phoneListSelector, { nth: 0 });
+            return (await this.page.locator(this.phoneListSelector).nth(0).textContent()) as string;
+        }
     }
 }
 

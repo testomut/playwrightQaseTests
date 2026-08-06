@@ -38,7 +38,7 @@ class TriggersPage extends SettingsPage {
     private triggerTableStatusIsSwitchedSelector: string = '.vue-js-switch.toggled';
     private webhookButtonSelector: string = '.webhook-btn';
     private addedTagsListSelector: string = '.selectize-input .tag';
-     
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -47,7 +47,7 @@ class TriggersPage extends SettingsPage {
     }
 
     async createTrigger(): Promise<void> {
-        await this.customClick(this.createTriggerButtonSelector, {nth:0});
+        await this.customClick(this.createTriggerButtonSelector, { nth: 0 });
     }
 
     async createNewTrigger(): Promise<void> {
@@ -57,18 +57,21 @@ class TriggersPage extends SettingsPage {
 
     async openWebhookUrlWithNumber(triggerName: string, phone: string): Promise<void> {
         const triggers = await this.page.locator(this.triggersTableList);
-        const trigger = await triggers.filter({hasText: triggerName});
+        const trigger = await triggers.filter({ hasText: triggerName });
         const triggerButton = await trigger.locator(this.webhookButtonSelector);
-        const url = (await triggerButton.getAttribute('data-clipboard-text'))?.replace('phone=',`phone=${phone}`) as string;
+        const url = (await triggerButton.getAttribute('data-clipboard-text'))?.replace(
+            'phone=',
+            `phone=${phone}`,
+        ) as string;
         const response = await fetch(url);
         expect(response.status).toBe(200);
     }
 
     async verifyTriggersList(triggersList: TriggerMessageTableList): Promise<void> {
         const triggers = await this.page.locator(this.triggersTableList);
-        for(let i =0; triggersList.length> i; i++) {
-            const trigger = await triggers.filter({hasText: triggersList[i].name}); ///locator(this.triggerTableNameSelector).getByText(triggersList[i].name);
-            console.log(await trigger.textContent())
+        for (let i = 0; triggersList.length > i; i++) {
+            const trigger = await triggers.filter({ hasText: triggersList[i].name }); ///locator(this.triggerTableNameSelector).getByText(triggersList[i].name);
+            console.log(await trigger.textContent());
             const triggerSentBy = await trigger.locator(this.triggerTableSentBySelector).textContent();
             const triggerTotal = await trigger.locator(this.triggerTableTotalSelector).textContent();
             const triggerSuccess = await trigger.locator(this.triggerTableSuccessSelector).textContent();
@@ -76,7 +79,11 @@ class TriggersPage extends SettingsPage {
             const triggerClicks = await trigger.locator(this.triggerTableClicksSelector).textContent();
             const triggerConversions = await trigger.locator(this.triggerTableConversationsSelector).textContent();
             const triggerRevenue = await trigger.locator(this.triggerTableRevenueSelector).textContent();
-            const triggerStatus = await trigger.locator(this.triggerTableStatusSelector).locator(this.triggerTableStatusIsSwitchedSelector).count() === 1;
+            const triggerStatus =
+                (await trigger
+                    .locator(this.triggerTableStatusSelector)
+                    .locator(this.triggerTableStatusIsSwitchedSelector)
+                    .count()) === 1;
 
             expect(triggersList[i].sentBy).toBe(triggerSentBy?.trim());
             expect(triggersList[i].total).toBe(triggerTotal?.trim());
@@ -90,18 +97,19 @@ class TriggersPage extends SettingsPage {
     }
 
     async fillNewTrigger(triggerData: NewTrigger): Promise<void> {
-        
         await this.customFill(this.triggerNameInputSelector, triggerData.name);
-        if(triggerData.Integration) {
+        if (triggerData.Integration) {
             await this.customClick(this.integrationDropdownSelector);
-            const integrationOption = await this.page.locator(this.integrationOptionListSelector).getByText(triggerData.Integration);
+            const integrationOption = await this.page
+                .locator(this.integrationOptionListSelector)
+                .getByText(triggerData.Integration);
             await this.customClick(integrationOption);
         }
         await this.customClick(this.sendAsDropdownSelector);
         const inbox = await this.page.locator(this.sendAsInboxListSelector).getByText(triggerData.sendAs);
         await this.customClick(inbox);
-        if(triggerData.tags) {
-            for(let i=0;triggerData.tags.length>i; i++) {
+        if (triggerData.tags) {
+            for (let i = 0; triggerData.tags.length > i; i++) {
                 await this.page.locator(this.tagsInputSelector).click();
                 const tag = await this.page.locator(this.tagsListSelector).getByText(triggerData.tags[i]);
                 await this.customClick(tag);
@@ -109,35 +117,37 @@ class TriggersPage extends SettingsPage {
                 await this.page.waitForSelector(this.addedTagsListSelector);
             }
         }
-        if(triggerData.textMessage) {
-            for(let i = 0; triggerData.textMessage.length>i; i++) {
-                if(triggerData.textMessage[i].emoji) {
+        if (triggerData.textMessage) {
+            for (let i = 0; triggerData.textMessage.length > i; i++) {
+                if (triggerData.textMessage[i].emoji) {
                     await this.customClick(this.openEmojiSelector);
                     await this.customClick(`[class="${triggerData.textMessage[i].emoji}"]`);
                 }
-                if(triggerData.textMessage[i].file) {
+                if (triggerData.textMessage[i].file) {
                     await this.customClick(this.openAttacheFilesSelector);
-                    if(triggerData.textMessage[i].file === 'img') {
+                    if (triggerData.textMessage[i].file === 'img') {
                         await this.customClick(this.mediaLibraryImageSelector);
                     } else {
                         await this.customClick(this.mediaLibraryVideoSelector);
                     }
                     await this.customClick(this.addButtonMediaLibrarySelector);
                 }
-                if(triggerData.textMessage[i].mergeField) {
+                if (triggerData.textMessage[i].mergeField) {
                     await this.customClick(this.openMergeFieldsSelector);
-                    const mergeField = await this.page.locator(this.mergeFieldsListSelector).getByText(triggerData.textMessage[i].mergeField as string);
+                    const mergeField = await this.page
+                        .locator(this.mergeFieldsListSelector)
+                        .getByText(triggerData.textMessage[i].mergeField as string);
                     await this.customClick(mergeField);
                     await this.customClick(this.mergeFieldsSaveSelector);
                 }
-                if(triggerData.textMessage[i].url) {
+                if (triggerData.textMessage[i].url) {
                     const url = triggerData.textMessage[i].url as string;
-                    await this.customFill(this.messageInputSelector, url, {valueClear: false});
+                    await this.customFill(this.messageInputSelector, url, { valueClear: false });
                     await this.customClick(this.createLinkSelector);
                 }
-                if(triggerData.textMessage[i].message) {
+                if (triggerData.textMessage[i].message) {
                     const message = triggerData.textMessage[i].message as string;
-                    await this.customFill(this.messageInputSelector, message, {valueClear: false});
+                    await this.customFill(this.messageInputSelector, message, { valueClear: false });
                 }
             }
         }

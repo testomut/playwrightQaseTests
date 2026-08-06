@@ -1,6 +1,13 @@
 import { Page, expect, BrowserContext } from '@playwright/test';
 import SettingsPage from './SettingsPage';
-import { PlanInfo, MessagesAmount, CreditsAmount, IfBalanceFallsBelow, PaymentMethodList, ExportFileData } from '../types/Types';
+import {
+    PlanInfo,
+    MessagesAmount,
+    CreditsAmount,
+    IfBalanceFallsBelow,
+    PaymentMethodList,
+    ExportFileData,
+} from '../types/Types';
 import { promises as fs } from 'fs';
 import pdfParse from 'pdf-parse';
 
@@ -61,7 +68,7 @@ class BillingPage extends SettingsPage {
         const billingInfo = await this.page.locator(this.billingInformationSelector).textContent();
         expect(billingInfo).toContain(planInfo.organization);
         expect(billingInfo).toContain(planInfo.plan);
-        if(planInfo.downgrade) {
+        if (planInfo.downgrade) {
             expect(billingInfo).toContain(planInfo.downgrade);
         }
     }
@@ -71,11 +78,11 @@ class BillingPage extends SettingsPage {
     }
 
     async verifyAutoRecharge(isRecharge: boolean): Promise<void> {
-        if(isRecharge) {
+        if (isRecharge) {
             await this.page.waitForSelector(this.autoRechargeEnablesSelector);
         } else {
             await this.page.waitForSelector(this.autoRechargeDisabledSelector);
-        }      
+        }
     }
 
     async paymentHistoryAmount(amount: number): Promise<void> {
@@ -96,21 +103,21 @@ class BillingPage extends SettingsPage {
     }
 
     async annuallySwitch(): Promise<void> {
-        await this.customClick(this.toggleButtonsListSelector, {nth:1});
-    } 
+        await this.customClick(this.toggleButtonsListSelector, { nth: 1 });
+    }
 
     async upgradePlan(): Promise<void> {
-        await this.customClick(this.upgradeButtonsListSelector, {nth:0});
+        await this.customClick(this.upgradeButtonsListSelector, { nth: 0 });
         await this.customClick(this.submitButtonSelector);
         await this.waitSpinnerLoader();
         await this.waitModalAlertSuccess();
-    } 
+    }
 
     async selectPlan(): Promise<void> {
         await this.customClick(this.submitButtonSelector);
         await this.customClick(this.upgradePlaneCheckboxSelector);
         await this.customClick(this.submitButtonSelector);
-    } 
+    }
 
     async upgradeAndSubmitMyApplication(): Promise<void> {
         await this.customClick(this.submitButtonSelector);
@@ -120,15 +127,15 @@ class BillingPage extends SettingsPage {
     async downloadLastReceipt(): Promise<ExportFileData> {
         const [download] = await Promise.all([
             this.page.waitForEvent('download'),
-            this.customClick(this.downloadLinkSelector, {nth: 0})
+            this.customClick(this.downloadLinkSelector, { nth: 0 }),
         ]);
         const filePath = `./downloads/${download.suggestedFilename()}`;
         await download.saveAs(filePath);
-    
+
         let fileContent;
         if (await fs.stat(filePath)) {
             const fileExtension = filePath.split('.').pop()?.toLowerCase();
-    
+
             if (fileExtension === 'pdf') {
                 const dataBuffer = await fs.readFile(filePath);
                 const pdfData = await pdfParse(dataBuffer);
@@ -137,25 +144,31 @@ class BillingPage extends SettingsPage {
                 fileContent = await fs.readFile(filePath, 'utf8');
             }
         }
-    
+
         return {
             path: filePath,
             name: download.suggestedFilename(),
-            content: fileContent
+            content: fileContent,
         };
     }
 
-    async verifyDownloadFile(content: string, verifyList:string[]): Promise<void> {
-        for(let i =0; verifyList.length>i; i++) {
-            expect(content .replace(/\s+/g, ' ').trim()).toContain(verifyList[i]);
+    async verifyDownloadFile(content: string, verifyList: string[]): Promise<void> {
+        for (let i = 0; verifyList.length > i; i++) {
+            expect(content.replace(/\s+/g, ' ').trim()).toContain(verifyList[i]);
         }
     }
 
-    async verifyOrder(planName: string, planAmount: string, totalAmount: string, discount?: string, discountAmount?: string): Promise<void> {
+    async verifyOrder(
+        planName: string,
+        planAmount: string,
+        totalAmount: string,
+        discount?: string,
+        discountAmount?: string,
+    ): Promise<void> {
         const orderPlanName = await this.page.locator(this.orderPlanNameSelector).nth(0).textContent();
-        const orderPlanAmount = await this.page.locator(this.orderPlanAmountSelector).nth(0).textContent() as string;
+        const orderPlanAmount = (await this.page.locator(this.orderPlanAmountSelector).nth(0).textContent()) as string;
         const orderTotalAmount = await this.page.locator(this.orderTotalAmountSelector).textContent();
-        if(discount) {
+        if (discount) {
             const orderDiscount = await this.page.locator(this.orderPlanNameSelector).nth(1).textContent();
             const orderDiscountAmount = await this.page.locator(this.orderPlanAmountSelector).nth(1).textContent();
             expect(orderDiscount?.trim()).toBe(discount);
@@ -165,7 +178,7 @@ class BillingPage extends SettingsPage {
         expect(orderPlanName?.trim()).toBe(planName);
         expect(orderPlanAmount?.trim()).toBe(planAmount);
         expect(orderTotalAmount?.trim()).toBe(totalAmount);
-    } 
+    }
 
     async openVerifyAddCredits(): Promise<void> {
         await this.customClick(this.upgradeDropdownSelector);
@@ -202,13 +215,13 @@ class BillingPage extends SettingsPage {
     }
 
     async autoRecharge(recharge: boolean): Promise<void> {
-        const ifRechargeActive = await this.page.locator(this.autoRechargeOnSelector).count() === 1;
-        if(recharge) {
-            if(!ifRechargeActive) {
+        const ifRechargeActive = (await this.page.locator(this.autoRechargeOnSelector).count()) === 1;
+        if (recharge) {
+            if (!ifRechargeActive) {
                 await this.customClick(this.autoRechargeButtonSelector);
             }
         } else {
-            if(ifRechargeActive) {
+            if (ifRechargeActive) {
                 await this.customClick(this.autoRechargeButtonSelector);
             }
         }
@@ -223,17 +236,17 @@ class BillingPage extends SettingsPage {
         const getPaymentList = await this.page.locator(this.paymentMethodListSelector);
         const getPaymentListCount = await this.page.locator(this.paymentMethodListSelector).count();
         expect(getPaymentListCount).toBe(paymentList.length);
-        for(let i=0;paymentList.length> i; i++) {
+        for (let i = 0; paymentList.length > i; i++) {
             const cardNumber = await getPaymentList.nth(i).locator(this.paymentMethodCardNumberSelector).textContent();
             const date = await getPaymentList.nth(i).locator(this.paymentMethodDateSelector).textContent();
-            const isPrimary = await getPaymentList.nth(i).locator(this.paymentMethodPrimarySelector).count() === 1;
+            const isPrimary = (await getPaymentList.nth(i).locator(this.paymentMethodPrimarySelector).count()) === 1;
 
             expect(cardNumber?.trim()).toBe(paymentList[i].cardNumber);
             expect(date?.trim()).toBe(paymentList[i].date);
             expect(isPrimary).toBe(paymentList[i].primary);
         }
     }
-    
+
     async verifyIfBalanceFallsBelow(criteria: IfBalanceFallsBelow): Promise<void> {
         const balanceCriteria = await this.page.locator(this.ifBalanceFallsBelowDropdownSelector).textContent();
         expect(balanceCriteria?.trim()).toBe(`${criteria} credits`);
@@ -257,39 +270,39 @@ class BillingPage extends SettingsPage {
         await this.waitModalAlertSuccess();
     }
 
-    async addSeats(amount: string): Promise<void> { 
+    async addSeats(amount: string): Promise<void> {
         await this.customFill(this.seatsAmountInputSelector, amount);
         await this.customClick(this.submitButtonSelector);
         await this.waitSpinnerLoader();
         await this.waitModalAlertSuccess();
     }
 
-    async addNumbers(amount: string): Promise<void> { 
+    async addNumbers(amount: string): Promise<void> {
         await this.customFill(this.numbersAmountInputSelector, amount);
         await this.customClick(this.submitButtonSelector);
         await this.waitSpinnerLoader();
         await this.waitModalAlertSuccess();
     }
 
-    async getSeats(): Promise<string[] | undefined> { 
+    async getSeats(): Promise<string[] | undefined> {
         const seatsContent = await this.page.locator(this.statsItemsListSelector).nth(1).textContent();
         return seatsContent?.split(' of ');
     }
 
-    async getNumbers(): Promise<string[] | undefined> { 
+    async getNumbers(): Promise<string[] | undefined> {
         const numbersContent = await this.page.locator(this.statsItemsListSelector).nth(0).textContent();
         return numbersContent?.split(' of ');
     }
 
-    async verifySeats(seats: string[], increase: string): Promise<void> { 
-        const seatsContent = await this.getSeats() as string[];
+    async verifySeats(seats: string[], increase: string): Promise<void> {
+        const seatsContent = (await this.getSeats()) as string[];
         expect(seats.length).toBe(2);
         expect(+seatsContent[0]).toBe(+seats[0] + +increase);
         expect(+seatsContent[1]).toBe(+seats[1] + +increase);
     }
 
-    async verifyNumbers(numbers: string[], increase: string): Promise<void> { 
-        const numbersContent = await this.getNumbers() as string[];
+    async verifyNumbers(numbers: string[], increase: string): Promise<void> {
+        const numbersContent = (await this.getNumbers()) as string[];
         expect(numbers.length).toBe(2);
         expect(+numbersContent[0]).toBe(+numbers[0] + +increase);
         expect(+numbersContent[1]).toBe(+numbers[1] + +increase);
@@ -307,21 +320,21 @@ class BillingPage extends SettingsPage {
         let box5kCoordinates;
         let box7500Coordinates;
         let box10kCoordinates;
-        if(box500and1k) {
-            box500Coordinates = {x: box500and1k.x, y: box500and1k.y+box500and1k.height/2};
-            box1kCoordinates = {x: box500and1k.x+box500and1k.width, y: box500and1k.y+box500and1k.height/2};
+        if (box500and1k) {
+            box500Coordinates = { x: box500and1k.x, y: box500and1k.y + box500and1k.height / 2 };
+            box1kCoordinates = { x: box500and1k.x + box500and1k.width, y: box500and1k.y + box500and1k.height / 2 };
         }
-        if(box2500) {
-            box2500Coordinates = {x: box2500.x+box2500.width, y: box2500.y+box2500.height/2};
+        if (box2500) {
+            box2500Coordinates = { x: box2500.x + box2500.width, y: box2500.y + box2500.height / 2 };
         }
-        if(box5k) {
-            box5kCoordinates = {x: box5k.x+box5k.width, y: box5k.y+box5k.height/2};
+        if (box5k) {
+            box5kCoordinates = { x: box5k.x + box5k.width, y: box5k.y + box5k.height / 2 };
         }
-        if(box7500) {
-            box7500Coordinates = {x: box7500.x+box7500.width, y: box7500.y+box7500.height/2};
+        if (box7500) {
+            box7500Coordinates = { x: box7500.x + box7500.width, y: box7500.y + box7500.height / 2 };
         }
-        if(box10k) {
-            box10kCoordinates = {x: box10k.x+box10k.width, y: box10k.y+box10k.height/2};
+        if (box10k) {
+            box10kCoordinates = { x: box10k.x + box10k.width, y: box10k.y + box10k.height / 2 };
         }
         const coordinates = {
             '500': box500Coordinates,
@@ -335,11 +348,11 @@ class BillingPage extends SettingsPage {
             '30k': box2500Coordinates,
             '60k': box5kCoordinates,
             '90k': box7500Coordinates,
-            '120k+': box10kCoordinates
-        }
-        
+            '120k+': box10kCoordinates,
+        };
+
         await this.page.mouse.click(coordinates[amount].x, coordinates[amount].y);
-    } 
+    }
 }
 
 export default BillingPage;

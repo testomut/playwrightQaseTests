@@ -1,4 +1,4 @@
-import { Page, Locator, test, expect, BrowserContext  } from '@playwright/test';
+import { Page, Locator, test, expect, BrowserContext } from '@playwright/test';
 import { ClickAndLocatorOptions, LocatorCustomOptions, FillCustomOptions } from '../types/commands';
 
 class CustomCommands {
@@ -9,7 +9,7 @@ class CustomCommands {
         this.context = context;
 
         // Handling pop-ups
-        this.page.on('dialog', async dialog => {
+        this.page.on('dialog', async (dialog) => {
             await dialog.accept();
         });
     }
@@ -17,20 +17,20 @@ class CustomCommands {
     async customSelector(selector: string | Locator, options?: LocatorCustomOptions): Promise<Locator> {
         let nthLocator = 0;
         let tab = 1;
-        
-        if(options && options.nth) {
+
+        if (options && options.nth) {
             nthLocator = options.nth;
         }
-        if(options && options.tab) {
+        if (options && options.tab) {
             tab = options.tab;
         }
         const pages = await this.context.pages();
-        const targetPage = pages[tab-1];
-        if(typeof selector === 'string') {
-            if(options && options.selectorType && options.selectorType === 'byText') {
-                return await targetPage.getByText(selector) as Locator;
+        const targetPage = pages[tab - 1];
+        if (typeof selector === 'string') {
+            if (options && options.selectorType && options.selectorType === 'byText') {
+                return (await targetPage.getByText(selector)) as Locator;
             } else {
-                return await targetPage.locator(selector, options).nth(nthLocator) as Locator;
+                return (await targetPage.locator(selector, options).nth(nthLocator)) as Locator;
             }
         }
 
@@ -39,17 +39,17 @@ class CustomCommands {
 
     async customClick(selector: string | Locator, options?: ClickAndLocatorOptions) {
         let tab = 1;
-        if(options && options.tab) {
+        if (options && options.tab) {
             tab = options.tab;
         }
         const pages = await this.context.pages();
-        const targetPage = pages[tab-1];
+        const targetPage = pages[tab - 1];
         const locator = await this.customSelector(selector, options);
         await locator.waitFor({ state: 'visible', timeout: options?.timeout || 120000 });
-        
+
         console.log(`User actions: Clicking on the element: "${(await locator.textContent())?.trim()}"`);
         await targetPage.waitForLoadState('load');
-        await locator.click({trial:true});
+        await locator.click({ trial: true });
         await locator.click({
             button: options?.button || 'left',
             clickCount: options?.clickCount || 1,
@@ -58,34 +58,34 @@ class CustomCommands {
             modifiers: options?.modifiers,
             noWaitAfter: options?.noWaitAfter || false,
             position: options?.position,
-            trial: options?.trial || false
+            trial: options?.trial || false,
         });
-        if(options?.hidden) {
+        if (options?.hidden) {
             await locator.waitFor({ state: 'hidden', timeout: options?.timeout || 120000 });
         }
     }
-    
+
     async customFill(selector: string | Locator, value: string, options?: FillCustomOptions) {
-        let logs = true;
-        let oldTextInput = '';
+        let oldTextInput: string;
         let inputValue = value;
-        if(options?.logs === false) {
-            logs = options?.logs;
+        if (options?.logs === false) {
             inputValue = '*********';
         }
         const locator = await this.customSelector(selector, options);
         await locator.waitFor({ state: 'visible', timeout: options?.timeout || 120000 });
-        console.log(`User actions: Typing ${inputValue} to "${(await locator.getAttribute('placeholder'))?.trim()}" input`);
-        oldTextInput = await locator.textContent() as string;
-        if(options && options.valueClear === false) {
-            oldTextInput = await locator.inputValue() as string;
+        console.log(
+            `User actions: Typing ${inputValue} to "${(await locator.getAttribute('placeholder'))?.trim()}" input`,
+        );
+        oldTextInput = (await locator.textContent()) as string;
+        if (options && options.valueClear === false) {
+            oldTextInput = (await locator.inputValue()) as string;
         }
-        if(options && (options.clear === false || options.valueClear === false)) {
+        if (options && (options.clear === false || options.valueClear === false)) {
             await locator.fill(`${oldTextInput} ${value}`);
         } else {
             await locator.fill(value);
         }
-        if(options && options.enter === true) {
+        if (options && options.enter === true) {
             await locator.press('Enter');
         }
     }
@@ -100,9 +100,10 @@ class CustomCommands {
     }
 
     async clickIfElementPresent(selector: string, options?: ClickAndLocatorOptions) {
-        if(await this.isElementPresent(selector)) {
-            const ifChatBotPresent = await this.page.locator('iframe[name="intercom-notifications-frame"]').count() === 1;
-            if(ifChatBotPresent) {
+        if (await this.isElementPresent(selector)) {
+            const ifChatBotPresent =
+                (await this.page.locator('iframe[name="intercom-notifications-frame"]').count()) === 1;
+            if (ifChatBotPresent) {
                 await this.page.evaluate(() => {
                     const iframe = document.querySelector('iframe[name="intercom-notifications-frame"]');
                     if (iframe) {
@@ -129,13 +130,9 @@ class CustomCommands {
             .replace(/[“”]/g, '"')
             .replace(/[‘’]/g, "'")
             .trim();
-        const expectedText = text
-            .replace(/\s+/g, ' ')
-            .replace(/[“”]/g, '"')
-            .replace(/[‘’]/g, "'")
-            .trim();
-        console.log(currentText)
-        console.log(expectedText)
+        const expectedText = text.replace(/\s+/g, ' ').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim();
+        console.log(currentText);
+        console.log(expectedText);
         expect(currentText).toContain(expectedText);
     }
 

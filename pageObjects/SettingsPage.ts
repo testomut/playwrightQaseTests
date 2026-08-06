@@ -12,7 +12,7 @@ class SettingsPage extends BasePage {
     private activeTab: string = '.is-active';
     private modalAlertSuccess: string = '.modal-alert-success';
     private complianceRegistrationPopUpCancelButtonSelector: string = `.button--cancel`;
-     
+
     protected context: BrowserContext;
     constructor(page: Page, context: BrowserContext) {
         super(page, context);
@@ -25,7 +25,7 @@ class SettingsPage extends BasePage {
         await this.customClick(this.settingsSelector);
         await this.clickIfElementPresent(this.complianceRegistrationPopUpCancelButtonSelector);
     }
-   
+
     async openMembersPage(): Promise<void> {
         await this.openSettingsPage();
         await this.customClick(this.membersSelector);
