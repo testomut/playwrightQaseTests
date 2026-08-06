@@ -12,7 +12,7 @@ This started as the automation framework for a SaaS product's UI regression suit
 
 - Playwright and TypeScript framework design
 - Page Object and fixture composition
-- A service layer (API + email) kept separate from UI page objects
+- A service layer for API-assisted setup and email verification, kept separate from UI page objects
 - Qase TestOps integration (test IDs, run metadata, attachments)
 - API-assisted setup and teardown, instead of driving the UI for every precondition
 - Parallel account provisioning and concurrency control
