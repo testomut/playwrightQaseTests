@@ -1,22 +1,22 @@
-# Sanitized Playwright Framework Architecture Sample
+# Playwright Framework Architecture Sample
 
 Playwright, TypeScript, Qase TestOps, service layers, fixtures, parallel account provisioning, and external integration patterns.
 
-A sanitized architecture sample based on a Playwright framework I designed for a real product. Application-specific selectors, URLs, credentials, and business data were replaced before publication. The project demonstrates framework structure and integration patterns rather than providing a runnable test suite.
+This repository is based on a Playwright framework I designed for a real product. Application-specific selectors, URLs, credentials, and business data were replaced before publication. The project is intended to demonstrate framework architecture and integration patterns rather than provide a runnable test suite.
 
 ## 1. Project purpose
 
-This started as the automation framework for a SaaS product's UI and API regression suite spanning customer communication, account and user management, billing, workflow automation, and analytics. It's published here to show how the framework itself is put together: page objects, a service layer, fixtures, parallel-safe test-account provisioning, and Qase TestOps reporting.
+This started as the automation framework for a SaaS product's UI regression suite, with API helpers for setup, teardown, and test-data preparation, spanning customer communication, account and user management, billing, workflow automation, and analytics. It's published here to show how the framework itself is put together: page objects, a service layer, fixtures, parallel-safe test-account provisioning, and Qase TestOps reporting.
 
 ## 2. What the project demonstrates
 
-- Page Object Model with a shared base class and domain-specific subclasses
+- Playwright and TypeScript framework design
+- Page Object and fixture composition
 - A service layer (API + email) kept separate from UI page objects
-- Fixture composition per test need, instead of one large fixture
-- Two Playwright configs for two phases: account setup vs. main suite
-- Mutex-guarded parallel test-account provisioning
-- Qase TestOps reporter wiring (test IDs, run metadata, attachments)
-- Integration patterns for email (IMAP), PDF parsing, and HAR-based caching
+- Qase TestOps integration (test IDs, run metadata, attachments)
+- API-assisted setup and teardown, instead of driving the UI for every precondition
+- Parallel account provisioning and concurrency control
+- External integration patterns (email, PDF parsing, HAR-based caching)
 
 ## 3. Architecture overview
 

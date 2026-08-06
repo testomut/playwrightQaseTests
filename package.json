@@ -1,7 +1,7 @@
 {
     "name": "playwright-qase-tests",
     "version": "1.0.0",
-    "description": "Sanitized Playwright + Qase test framework architecture sample.",
+    "description": "Playwright and Qase test framework architecture sample, adapted from a real project.",
     "license": "MIT",
     "author": "Stanislav Mokshyn <https://github.com/testomut>",
     "keywords": [

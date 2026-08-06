@@ -2,8 +2,8 @@ name: Code Quality
 
 # Validates repo hygiene only - lint, formatting, and TypeScript
 # compilation. It does not run the Playwright/Qase suite: the target
-# application is sanitized and unavailable, so there's nothing for the
-# e2e tests to run against. See README.md and ARCHITECTURE.md.
+# application isn't public, so there's nothing for the e2e tests to
+# run against. See README.md and ARCHITECTURE.md.
 
 on:
     push:
