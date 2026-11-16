@@ -1,5 +1,3 @@
-> **This project has moved to [testomut/playwright](https://github.com/testomut/playwright/tree/main/js/playwrightQaseTests)**, together with its full history. This repository is archived and kept read-only so existing links keep working.
-
 # Playwright Framework Architecture Sample
 
 Playwright, TypeScript, Qase TestOps, service layers, fixtures, parallel account provisioning, and external integration patterns.
